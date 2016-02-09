@@ -38,14 +38,15 @@ int main(void)
 {
 	board_init();
 		
-	sei();							// Enable interrupts
+	sei();									// Enable interrupts
 	
 	// Set up the external interrupt	
-	MCUCR |= (1 << ISC01) | (1 << ISC00);	// set INT0 to trigger on a rising edge
+	MCUCR |= (1 << ISC01);					// set INT0 to trigger on a falling edge
 	GIMSK |= (1 << INT0);					// enable the external interrupt
 	GIFR |= (1 << INTF0);					// clear the external interrupt flag
 	
 	while (1) {
+		PORTA = 0x00;						// turn off all port A pins
 		PORTA |= port_pin;					// turn on the active output pin
 		
 		// No sense is staying awake, so go to sleep and wait for interrupt
@@ -78,5 +79,5 @@ void board_init(void)
 	DDRA = 0xFF;	// Configure Port A as all outputs
 	PORTA = 0x00;	// Set all port A outputs to 0
 
-	PORTB = 0x0B;	// enable pull-ups on PB3, PB1, PB0 (unused inputs)
+	PORTB = 0x04;	// enable pull-up on PB2 (INT0)
 }
